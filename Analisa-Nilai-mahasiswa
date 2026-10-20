@@ -1,0 +1,123 @@
+import streamlit as st
+
+# ==============================
+# JUDUL
+# ==============================
+st.title("📊 Analisis Nilai Mahasiswa")
+st.write("Masukkan nilai mahasiswa untuk dianalisis")
+st.divider()
+
+# ==============================
+# INPUT
+# ==============================
+st.subheader("Data Mahasiswa")
+
+# input nama mahasiswa dipisah koma
+nama_input = st.text_input(
+    "Nama mahasiswa (pisah dengan koma):",
+    value="Andi, Budi, Citra, Dani, Eva"
+)
+
+# text_area untuk input nilai, satu per baris
+nilai_input = st.text_area(
+    "Nilai mahasiswa (satu per baris):",
+    value="85\n72\n91\n68\n79"
+)
+
+# ==============================
+# PROSES — jalankan saat tombol diklik
+# ==============================
+if st.button("Analisis", type="primary"):
+
+    # pisah nama berdasarkan koma, hilangkan spasi
+    daftar_nama  = [n.strip() for n in nama_input.split(",")]
+
+    # pisah nilai berdasarkan baris baru, ubah ke integer
+    daftar_nilai = [int(v.strip()) for v in nilai_input.split("\n") if v.strip()]
+
+    # validasi — jumlah nama dan nilai harus sama
+    if len(daftar_nama) != len(daftar_nilai):
+        st.error(f"❌ Jumlah nama ({len(daftar_nama)}) dan nilai ({len(daftar_nilai)}) tidak sama!")
+
+    else:
+        # ==============================
+        # HITUNG STATISTIK
+        # ==============================
+        total     = sum(daftar_nilai)
+        rata_rata = total / len(daftar_nilai)
+        nilai_max = max(daftar_nilai)
+        nilai_min = min(daftar_nilai)
+
+        # cari nama yang nilainya tertinggi dan terendah
+        nama_max = daftar_nama[daftar_nilai.index(nilai_max)]
+        nama_min = daftar_nama[daftar_nilai.index(nilai_min)]
+
+        # ==============================
+        # OUTPUT — statistik ringkas
+        # ==============================
+        st.divider()
+        st.subheader("Statistik")
+
+        # tampilkan 3 metrik dalam 3 kolom
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Rata-rata", f"{rata_rata:.1f}")
+        with col2:
+            st.metric("Tertinggi", f"{nilai_max} ({nama_max})")
+        with col3:
+            st.metric("Terendah", f"{nilai_min} ({nama_min})")
+
+        # ==============================
+        # OUTPUT — tabel data lengkap
+        # ==============================
+        st.divider()
+        st.subheader("Data Lengkap")
+
+        # buat list of dict untuk tabel
+        data_tabel = []
+        for i in range(len(daftar_nama)):
+            nilai = daftar_nilai[i]
+
+            # tentukan grade berdasarkan nilai
+            if nilai >= 90:
+                grade = "A"
+            elif nilai >= 80:
+                grade = "B"
+            elif nilai >= 70:
+                grade = "C"
+            elif nilai >= 60:
+                grade = "D"
+            else:
+                grade = "E"
+
+            # tentukan status lulus/tidak
+            status = "✅ Lulus" if nilai >= 70 else "❌ Tidak Lulus"
+
+            data_tabel.append({
+                "Nama"  : daftar_nama[i],
+                "Nilai" : nilai,
+                "Grade" : grade,
+                "Status": status
+            })
+
+        # tampilkan tabel interaktif
+        st.dataframe(data_tabel, use_container_width=True)
+
+        # ==============================
+        # OUTPUT — grafik batang
+        # ==============================
+        st.divider()
+        st.subheader("Grafik Nilai")
+
+        # buat dict untuk line chart
+        chart_data = {}
+        for i in range(len(daftar_nama)):
+            chart_data[daftar_nama[i]] = daftar_nilai[i]
+
+        st.bar_chart(chart_data)
+
+        # hitung berapa yang lulus
+        lulus = sum(1 for n in daftar_nilai if n >= 70)
+        tidak_lulus = len(daftar_nilai) - lulus
+
+        st.info(f"📈 Lulus: {lulus} mahasiswa | Tidak Lulus: {tidak_lulus} mahasiswa")

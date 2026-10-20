@@ -1,0 +1,59 @@
+###################  Game Poin #######################
+import streamlit as st
+
+st.title("🎮 Catatan Skor Pemain")
+
+# ==========================================
+# LANGKAH 1: INISIALISASI SESSION STATE
+# ==========================================
+# Cek apakah variabel 'skor' sudah ada di session_state.
+# Jika belum ada, buat variabel tersebut dengan nilai awal 0.
+if "skor" not in st.session_state:
+    st.session_state["skor"] = 0
+
+# Cek apakah variabel 'nama_pemain' sudah ada di session_state.
+if "nama_pemain" not in st.session_state:
+    st.session_state["nama_pemain"] = "Pemain 1"
+
+
+# ==========================================
+# LANGKAH 2: INPUT DARI PENGGUNA
+# ==========================================
+# Input teks untuk mengubah nama pemain
+nama_input = st.text_input("Masukkan Nama Pemain:", value=st.session_state["nama_pemain"])
+
+# Simpan nama terbaru ke session_state
+st.session_state["nama_pemain"] = nama_input
+
+
+# ==========================================
+# LANGKAH 3: TAMPILKAN STATUS SAAT INI
+# ==========================================
+st.write(f"Pemain: **{st.session_state['nama_pemain']}**")
+st.write(f"Skor Saat Ini: **{st.session_state['skor']}**")
+
+
+# ==========================================
+# LANGKAH 4: TOMBOL AKSI (MENGUBAH STATE)
+# ==========================================
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    # Jika tombol 'Tambah 1 Poin' diklik
+    if st.button("➕ Tambah 1 Poin"):
+        st.session_state["skor"] += 1
+        st.rerun()  # Jalankan ulang halaman agar angka langsung terupdate
+
+with col2:
+    # Jika tombol 'Tambah 5 Poin' diklik
+    if st.button("⭐ Tambah 5 Poin"):
+        st.session_state["skor"] += 5
+        st.rerun()
+
+with col3:
+    # Jika tombol 'Reset' diklik
+    if st.button("🔄 Reset Skor"):
+        st.session_state["skor"] = 0
+        st.rerun()
+
+

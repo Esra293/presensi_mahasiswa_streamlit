@@ -1,0 +1,49 @@
+import streamlit as st
+
+# ==============================
+# JUDUL APLIKASI
+# ==============================
+st.title("🏃 Kalkulator BMI")
+st.write("Hitung Body Mass Index kamu di sini!")
+st.divider()
+
+# ==============================
+# INPUT
+# ==============================
+st.subheader("Masukkan data kamu")
+
+# slider berat badan, min=30, max=200, default=70
+berat = st.slider("Berat badan (kg):", min_value=30, max_value=200, value=70)
+
+# slider tinggi badan, min=100, max=250, default=170
+tinggi = st.slider("Tinggi badan (cm):", min_value=100, max_value=250, value=170)
+
+# ==============================
+# PROSES — hitung BMI saat tombol diklik
+# ==============================
+if st.button("Hitung BMI", type="primary"):
+
+    # ubah tinggi dari cm ke meter
+    tinggi_m = tinggi / 100
+
+    # rumus BMI = berat / (tinggi^2)
+    bmi = berat / (tinggi_m ** 2)
+
+    # ==============================
+    # OUTPUT — tampilkan hasil
+    # ==============================
+    st.divider()
+    st.subheader("Hasil")
+
+    # st.metric — tampilkan angka besar
+    st.metric(label="BMI kamu", value=f"{bmi:.1f}")
+
+    # tentukan kategori berdasarkan nilai BMI
+    if bmi < 18.5:
+        st.warning("⚠️ Kategori: Berat Badan Kurang (Underweight)")
+    elif bmi < 25.0:
+        st.success("✅ Kategori: Berat Badan Normal")
+    elif bmi < 30.0:
+        st.warning("⚠️ Kategori: Kelebihan Berat Badan (Overweight)")
+    else:
+        st.error("❌ Kategori: Obesitas")

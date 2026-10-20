@@ -46,3 +46,11 @@ if st.session_state.daftar_absensi:
         st.rerun()
 else:
     st.write("Belum ada mahasiswa yang melakukan presensi.")
+
+
+struktur File
+proyek_app/
+├── main.py              # Entry point (Halaman Beranda/Login)
+└── pages/               # Folder khusus halaman tambahan
+    ├── 1_Fitur_Utama.py
+    └── 2_Pengaturan.py

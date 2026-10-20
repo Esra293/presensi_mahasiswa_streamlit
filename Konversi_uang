@@ -1,0 +1,71 @@
+import streamlit as st
+
+# ==============================
+# JUDUL
+# ==============================
+st.title("💱 Konverter Mata Uang")
+st.caption("Kurs simulasi — bukan kurs real time")
+st.divider()
+
+# ==============================
+# DATA KURS
+# kurs terhadap IDR (Rupiah)
+# ==============================
+kurs = {
+    "USD (Dolar Amerika)": 16000,
+    "EUR (Euro)":          17500,
+    "JPY (Yen Jepang)":    107,
+    "SGD (Dolar Singapura)": 12000,
+    "MYR (Ringgit Malaysia)": 3600,
+}
+
+# ==============================
+# INPUT
+# ==============================
+# dua kolom sejajar untuk pilih mata uang asal dan tujuan
+col1, col2 = st.columns(2)
+
+with col1:
+    # dropdown pilih mata uang asal
+    mata_uang_dari = st.selectbox("Dari:", list(kurs.keys()))
+
+with col2:
+    # dropdown pilih mata uang tujuan
+    pilihan_tujuan = ["IDR (Rupiah)"] + list(kurs.keys())
+    mata_uang_ke   = st.selectbox("Ke:", pilihan_tujuan)
+
+# input jumlah yang ingin dikonversi
+jumlah = st.number_input("Jumlah:", min_value=0.0, value=1.0)
+
+# ==============================
+# PROSES — hitung konversi saat tombol diklik
+# ==============================
+if st.button("Konversi", type="primary"):
+
+    # konversi ke IDR dulu sebagai perantara
+    nilai_idr = jumlah * kurs[mata_uang_dari]
+
+    if mata_uang_ke == "IDR (Rupiah)":
+        # kalau tujuan IDR, langsung tampilkan
+        hasil = nilai_idr
+    else:
+        # bagi dengan kurs tujuan untuk dapat nilai akhir
+        hasil = nilai_idr / kurs[mata_uang_ke]
+
+    # ==============================
+    # OUTPUT
+    # ==============================
+    st.divider()
+
+    # tampilkan hasil dalam dua kolom
+    col_hasil1, col_hasil2 = st.columns(2)
+
+    with col_hasil1:
+        # metric untuk nilai asal
+        st.metric(label=mata_uang_dari, value=f"{jumlah:,.2f}")
+
+    with col_hasil2:
+        # metric untuk nilai hasil konversi
+        st.metric(label=mata_uang_ke, value=f"{hasil:,.2f}")
+
+    st.success(f"✅ {jumlah:,.2f} {mata_uang_dari} = {hasil:,.2f} {mata_uang_ke}")
